@@ -9,6 +9,7 @@
       }
     }
   ],
+  "buildCommand": "CI=false npm --prefix frontend install && CI=false npm --prefix frontend run build",
   "routes": [
     {
       "handle": "filesystem"
