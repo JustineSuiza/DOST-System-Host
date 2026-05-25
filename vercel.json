@@ -1,13 +1,25 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "frontend/build",
-  "devCommand": "npm --prefix frontend start",
-  "env": [
-    "REACT_APP_MAPBOX_ACCESS_TOKEN"
-  ],
-  "functions": {
-    "backend/**": {
-      "runtime": "php@8.0"
+  "installCommand": "npm --prefix frontend install",
+  "buildCommand": "npm --prefix frontend run build",
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "env": {
+    "REACT_APP_MAPBOX_ACCESS_TOKEN": "${REACT_APP_MAPBOX_ACCESS_TOKEN}"
   }
 }
