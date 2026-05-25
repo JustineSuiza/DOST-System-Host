@@ -1,0 +1,67 @@
+{
+  "name": "frontend2",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.15.0",
+    "@react-google-maps/api": "^2.19.3",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.6.7",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "chart.js": "^4.4.2",
+    "date-fns": "^3.6.0",
+    "docx": "^8.5.0",
+    "file-saver": "^2.0.5",
+    "html-docx-js": "^0.3.1",
+    "jquery": "^3.7.1",
+    "mapbox-gl": "^1.13.3",
+    "plotly.js": "^2.30.0",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
+    "react-chartjs-2": "^5.2.0",
+    "react-currency-input-field": "^3.8.0",
+    "react-data-table-component": "^7.6.2",
+    "react-date-range": "^2.0.0-alpha.4",
+    "react-datepicker": "^6.6.0",
+    "react-day-picker": "^8.10.1",
+    "react-dom": "^18.2.0",
+    "react-plotly.js": "^2.6.0",
+    "react-router-dom": "^6.22.1",
+    "react-scripts": "5.0.1",
+    "react-switch": "^7.0.0",
+    "react-tooltip": "^5.26.3",
+    "react-zoom-pan-pinch": "^3.4.4",
+    "select-philippines-address": "^1.0.6",
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+.card {
+    border-radius: 10px;
+    border: none;
+    background-color: #fff;
+}
+
+.img-fluid {
+    border-radius: 10px 0 0 10px;
+}
+
+.containerr {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.containerr:hover {
+    box-shadow: none;
+}

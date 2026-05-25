@@ -1,0 +1,23 @@
+.sample {
+    background-color: #E0E0E0;
+}
+
+.sample:hover {
+    background-color: #D9D9D9;
+}
+
+.samplee {
+    background-color: #fff;
+}
+
+.notif-item:hover {
+    background-color: #EEEEEE;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.dropdown-scrollable {
+    max-height: 30rem;
+    overflow-y: auto;
+}
+

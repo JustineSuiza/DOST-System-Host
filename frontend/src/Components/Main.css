@@ -1,0 +1,18 @@
+.expanded {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.expanded header {
+    grid-column: 1 / -1;
+}
+
+.expanded aside {
+    grid-column: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+.expanded article {
+    grid-column: 2;
+    transition: all 0.3s ease-in-out;
+}

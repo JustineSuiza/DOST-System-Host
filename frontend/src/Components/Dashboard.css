@@ -1,0 +1,19 @@
+/* .card:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: 0.2s;
+} */
+
+.custom-popup {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    padding: 5px;
+    margin: 0;
+}
+
+.custom-popup h3,
+.custom-popup p {
+    margin: 0; 
+}
+
+
+  

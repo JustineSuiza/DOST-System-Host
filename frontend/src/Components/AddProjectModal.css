@@ -1,0 +1,8 @@
+.container:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: 0.2s;
+}
+
+.date {
+    width: 120% !important;
+}

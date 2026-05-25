@@ -1,0 +1,563 @@
+import React, { forwardRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './Modal.css';
+import './AddProjectModal.css';
+import ReactDOM from 'react-dom';
+import { Tooltip } from 'react-tooltip';
+import CurrencyInput from 'react-currency-input-field';
+
+const AddProjectModal = () => {
+    const [projectCode, setProjectCode] = useState('');
+    const [ISP, setISP] = useState('');
+    const [programTitle, setProgramTitle] = useState('');
+	const [projectTitle, setProjectTitle] = useState('');
+    const [responsiblePerson, setResponsiblePerson] = useState('');
+    const [funding, setFunding] = useState('');
+    const [budget, setBudget] = useState([]); 
+    const [totalBudget, setTotalBudget] = useState(0);
+    const [implementingAgency, setImplementingAgency] = useState('');
+    const [programLeader, setProgramLeader] = useState('');
+    const [emailAddress, setEmailAddress] = useState('');
+    const [contactNumber, setContactNumber] = useState('');
+    const [postalAddress, setPostalAddress] = useState('');
+    const [cooperatingAgency, setCooperatingAgency] = useState('');
+    const [originalStart, setOriginalStart] = useState('');
+    const [originalEnd, setOriginalEnd] = useState('');
+    // const [changeStart, setChangeStart] = useState('');
+    // const [changeImplementationDate, setChangeImplementationDate] = useState('');
+    // const [firstExtension, setFirstExtension] = useState('');
+    // const [secondExtension, setSecondExtension] = useState('');
+    const [objectives, setObjectives] = useState('');
+    const [description, setDescription] = useState('');
+    const [deliverables, setDeliverables] = useState('');
+    const [beneficiaries, setBeneficiaries] = useState('');
+    // const [inceptionMeeting, setInceptionMeeting] = useState([null, null]);
+    // const [mande, setMandE] = useState('');
+    // const [status, setStatus] = useState('');
+    // const [remarks, setRemarks] = useState('');
+    // const [programReview, setProgramReview] = useState('');
+    // const [terminalReview, setTerminalReview] = useState('');
+    const [status, setStatus] = useState('');
+    const [remarks, setRemarks] = useState('');
+
+    const [first_name, setFirstName] = useState('');
+    const [last_name, setLastName] = useState('');
+
+    const [user, setUser] = useState(null);
+
+    const [showToast, setShowToast] = useState(false);
+	const [showToastSuccess, setShowToastSuccess] = useState(false);
+	const [toastTimeout, setToastTimeout] = useState(null);
+
+    const navigate = useNavigate();
+
+    // const [startDate, endDate] = inceptionMeeting;
+
+    useEffect(() => {
+        const userId = localStorage.getItem('id');
+        if (userId) {
+          fetchUserProfile(userId);
+        }
+        console.log(userId)
+    }, []);
+
+    useEffect(() => {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (!isLoggedIn) {
+          navigate("/login");
+        } else {
+          const storedFirstName = localStorage.getItem('first_name');
+          const storedLastName = localStorage.getItem('last_name');
+          setFirstName(storedFirstName);
+          setLastName(storedLastName);
+        }
+    }, []);
+
+    const fetchUserProfile = async (userId) => {
+    try {
+        const response = await fetch(`http://localhost:8080/Accounts/${userId}`);
+        if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+        } else {
+        console.error('Failed to fetch user profile');
+        }
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+    }
+    };
+
+    const saveProject = async (e) => {
+        e.preventDefault();
+    
+        // Check if at least one field has a value
+        const hasValue = Boolean(
+            projectCode || ISP || programTitle || projectTitle || responsiblePerson || funding ||
+            budget.length > 0 || implementingAgency || programLeader || emailAddress ||
+            contactNumber || postalAddress || cooperatingAgency || originalStart ||
+            originalEnd || objectives || description || deliverables || beneficiaries ||
+            status || remarks
+        );
+    
+        if (!hasValue) {
+            setShowToast(true);
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+            }
+            const timeout = setTimeout(() => {
+                setShowToast(false);
+            }, 5000);
+            setToastTimeout(timeout);
+            return;
+        }
+    
+        try {
+            await axios.post('http://localhost:8080/Projects', {
+                projectCode,
+                ISP,
+                programTitle,
+                projectTitle,
+                responsiblePerson,
+                funding,
+                budget: budget.map(item => ({ 
+                    year: item.year, 
+                    // amount: item.amount 
+                })),
+                // totalBudget,
+                implementingAgency,
+                programLeader,
+                emailAddress,
+                contactNumber,
+                postalAddress,
+                cooperatingAgency,
+                originalStart,
+                originalEnd,
+                // changeStart,
+                // changeImplementationDate,
+                // firstExtension,
+                // secondExtension,
+                objectives,
+                description,
+                deliverables,
+                beneficiaries,
+                // inceptionMeeting,
+                // mande,
+                // programReview,
+                // terminalReview,
+                status,
+                remarks,
+                created_by: `${first_name} ${last_name}`,
+            });
+            console.log('Project saved successfully');
+            setShowToastSuccess(true);
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+            }
+            const timeout = setTimeout(() => {
+                setShowToastSuccess(false);
+            }, 5000);
+            clear();
+        } catch (error) {
+            console.error('Error saving proposal:', error);
+        }
+    }
+    
+    const clear = () => {
+        setProjectCode('');
+        setISP('');
+        setProgramTitle('');
+        setProjectTitle('');
+        setResponsiblePerson('');
+        setFunding('');
+        setBudget([]);
+        setTotalBudget('');
+        setImplementingAgency('');
+        setProgramLeader('');
+        setEmailAddress('');
+        setContactNumber('');
+        setPostalAddress('');
+        setCooperatingAgency('');
+        setOriginalEnd('');
+        setOriginalStart('');
+        setObjectives('');
+        setDescription('');
+        setBeneficiaries('');
+        setDeliverables('');
+        setStatus('');
+        setRemarks('');
+    };
+
+    const handleISPChange = (e) => {
+		const selectedValue = e.target.textContent;
+		const parentMenu = e.target.closest('.dropdown-menu');
+		if (parentMenu && parentMenu.classList.contains('dropdown-submenu')) {
+			setISP(`Inland Biodiversity (${selectedValue})`);
+		} else {
+			setISP(selectedValue);
+		}
+	};
+
+    const handleResPerChange = (e) => {
+		setResponsiblePerson(e.target.innerText);
+	};
+
+    const handleFundingChange = (e) => {
+		setFunding(e.target.innerText);
+	};
+
+    // const handleImplementingChange = (e) => {
+    //     setImplementingAgency(e.target.innerText);
+    // }
+
+    // const handleCooperatingChange = (e) => {
+    //     setCooperatingAgency(e.target.innerText);
+    // }  
+
+    const handleRemarksChange = (e) => {
+        setRemarks(e.target.innerText);
+    }  
+
+    const handleOriginalStartChange = (e) => {
+        setOriginalStart(e.target.value);
+    };
+
+    const handleOriginalEndChange = (e) => {
+        setOriginalEnd(e.target.value);
+    };
+
+    const generateBudgetFields = () => {
+        const startYear = new Date(originalStart).getFullYear();
+        const endYear = new Date(originalEnd).getFullYear();
+        const years = endYear - startYear + 1;
+
+        const newBudgetData = Array.from({ length: years }, (_, index) => {
+            const year = startYear + index;
+            return { year, amount: '' };
+        });
+
+        setBudget(newBudgetData);
+    };
+
+    useEffect(() => {
+        // Check if both originalStart and originalEnd have values
+        if (originalStart && originalEnd) {
+            generateBudgetFields();
+        }
+    }, [originalStart, originalEnd]);
+    
+
+    // const handleBudgetChange = (index, amount) => {
+    //     const updatedBudgetData = [...budget];
+    //     updatedBudgetData[index].amount = amount;
+    //     setBudget(updatedBudgetData);
+    // };
+      
+    // useEffect(() => {
+    //     const calculateTotalBudget = () => {
+    //         const total = budget.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+    //         setTotalBudget(total);
+    //     };
+    //     calculateTotalBudget();
+    // }, [budget]);
+    
+    return (
+        <div>
+            <div className='sample me-3 addTooltip' style={{ borderRadius: '50px', padding: '7px 2px 2px 2px' }}>
+                <Tooltip anchorSelect=".addTooltip" style={{ borderRadius: '10px', fontSize: '12px', boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }}>
+                    New project
+                </Tooltip>
+                <button type="button" className="btn border-0" data-bs-toggle="modal" data-bs-target="#add">
+                <i className="fa-solid fa-plus fs-5"></i>
+                </button>
+            </div>
+            {ReactDOM.createPortal(
+            <form onSubmit={saveProject}>
+                <div className="modal fade" id="add" tabIndex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable custom-modal-dialog" style={{ maxWidth: '80rem' }}>
+                        <div className="modal-content p-2">
+                            <div className="modal-header border-0">
+                                <h5 className="modal-title fw-semibold" style={{ fontSize: '18px' }}>Add Project</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={clear} aria-label="Close"></button>
+                                <div
+                                    className="toast position-absolute top-10 start-50 translate-middle-x bg-success"
+                                    style={{ display: showToastSuccess ? 'block' : 'none' }}
+                                    role="alert"
+                                    aria-live="assertive"
+                                    aria-atomic="true"
+                                >
+                                    <div className="d-flex">
+                                        <div className="toast-body text-white">
+                                            Project saved successfully.
+                                        </div>
+                                    </div>	
+                                </div>
+                            </div>
+                            <div className="modal-body">
+                                <div className='container border p-4 mt-3 rounded'>
+                                    <h5><b>Project Details</b></h5>
+                                    <div className="row pt-3">
+                                        <div className="col">
+                                            <label className="pb-2">Project Code</label>
+                                            <input type="number" className="form-control" value={projectCode} onChange={(e) => setProjectCode(e.target.value)} required />
+                                        </div>
+                                        <div className='col'>
+                                            <label className="pb-2">ISP</label>
+                                            <input
+                                                className="form-control dropdown-toggle"
+                                                type="text"
+                                                id="dropISPAdd"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                value={ISP}
+                                                onChange={(e) => setISP(e.target.value)}
+                                                placeholder='Select ISP'
+                                                readOnly
+                                                required
+                                            />
+                                            <ul className="dropdown-menu p-0" aria-labelledby="dropISPAdd">
+                                                <li className="dropdown-item" onClick={handleISPChange}>MilkFish</li>
+                                                <li className="dropdown-item" onClick={handleISPChange}>Mangrove Crab</li>
+                                                <li className="dropdown-item" onClick={handleISPChange}>Shrimp</li>
+                                                <li className="dropdown-item" onClick={handleISPChange}>Tilapia</li>
+                                                <li className="dropdown-item" onClick={handleISPChange}>Mussel</li>
+                                                <li className="dropdown-item" onClick={handleISPChange}>Aquafeeds</li>
+                                                <li className="dropdown-item">
+                                                    Inland Biodiversity &raquo;
+                                                    <ul className="dropdown-menu dropdown-submenu p-0" style={{ marginTop: '-20px' }}>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Lakes</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Knifefish</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Tawilis</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Ayungin</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Catfish</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Climbing Perch</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Eel</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Goby</li>
+                                                        <li className="dropdown-item" onClick={handleISPChange}>Cyprinids</li>
+                                                        <li className="dropdown-itemm">
+                                                            <input
+                                                                className='ps-2 border-0 p-2'
+                                                                type="text"
+                                                                placeholder="Other..."
+                                                                onChange={(e) => setISP(`Inland Biodiversity (${e.target.value})`)}
+                                                                style={{ borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }}
+                                                            />
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div className="row pt-3">
+                                        <div className="col">
+                                            <label className="pb-2">Program Title</label>
+                                            <textarea type="text" className="form-control" value={programTitle} onChange={(e) => setProgramTitle(e.target.value)} required />
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Project Title</label>
+                                            <textarea type="text" className="form-control" value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} required />
+                                        </div>
+                                    </div>
+                                    <div className="row pt-3">
+                                        <div className="col">
+                                            <label className="pb-2">Responsible Person</label>
+                                            <input
+                                                className="form-control w-100 dropdown-toggle"
+                                                id="dropResPer"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                value={responsiblePerson}
+                                                onChange={(e) => setResponsiblePerson(e.target.value)}
+                                                placeholder='Select Responsible Person'
+                                                readOnly
+                                            />
+                                            <ul className="dropdown-menu p-0" aria-labelledby="dropResPer">
+                                                <li className="dropdown-item" onClick={handleResPerChange}>ATC</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>VGS</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>CVA</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>FFCM</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>KLT</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>GMDO</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>JJSV</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>GRO</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>STG</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>GES</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>AMSP</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>MAI</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>EBRD</li>
+                                                <li className="dropdown-item" onClick={handleResPerChange}>RBR</li>
+                                                <li className="dropdown-itemm">
+                                                    <input
+                                                        className='ps-2 border-0 p-2'
+                                                        type="text"
+                                                        placeholder="Other..."
+                                                        onChange={(e) => setResponsiblePerson(e.target.value)}
+                                                        style={{ borderBottomLeftRadius: '5px', borderBottomRightRadius: '5px' }}
+                                                    />
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Funding</label>
+                                            <input
+                                                className="form-control w-100 dropdown-toggle"
+                                                id="dropFunding"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                value={funding}
+                                                onChange={(e) => setFunding(e.target.value)}
+                                                placeholder='Select Funding'
+                                                readOnly
+                                            />
+                                            <ul className="dropdown-menu p-0" aria-labelledby="dropFunding">
+                                                <li className="dropdown-item" onClick={handleFundingChange}>DOST GIA</li>
+                                                <li className="dropdown-item" onClick={handleFundingChange}>PCAARRD GIA</li>
+                                            </ul>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Implementing Agency</label>
+                                            <input type="text" className="form-control" value={ implementingAgency } onChange={ (e) => setImplementingAgency(e.target.value) }/>
+                                        </div>
+                                        <div className='col'>
+                                            <div className="col">
+                                                <label className="pb-2">Program/Project Leader</label>
+                                                <input type="text" className="form-control" value={ programLeader } onChange={ (e) => setProgramLeader(e.target.value) }/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="row pt-3">
+                                        <div className="col">
+                                            <label className="pb-2">Email Address</label>
+                                            <input type="email" className="form-control" value={ emailAddress } onChange={ (e) => setEmailAddress(e.target.value) }/>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Contact Number</label>
+                                            <input type="number" className="form-control" value={ contactNumber } onChange={ (e) => setContactNumber(e.target.value) }/>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Postal Address</label>
+                                            <input type="text" className="form-control" value={ postalAddress } onChange={ (e) => setPostalAddress(e.target.value) }/>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Cooperating Agency</label>
+                                            <input type="text" className="form-control" value={ cooperatingAgency } onChange={ (e) => setCooperatingAgency(e.target.value) }/>
+                                        </div>
+                                    </div>
+                                    <div className="row pt-3">
+                                        <div className="col">
+                                            <label className="pb-2">Objectives</label>
+                                            <textarea type="text" className="form-control" value={ objectives } onChange={ (e) => setObjectives(e.target.value) }/>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Description</label>
+                                            <textarea type="text" className="form-control" value={ description } onChange={ (e) => setDescription(e.target.value) }/>
+                                        </div>
+                                    </div>
+                                    <div className="row pt-3">
+                                        <div className="col">
+                                            <label className="pb-2">Deliverables</label>
+                                            <textarea type="text" className="form-control" value={ deliverables } onChange={ (e) => setDeliverables(e.target.value) }/>
+                                        </div>
+                                        <div className="col">
+                                            <label className="pb-2">Beneficiaries</label>
+                                            <textarea type="text" className="form-control" value={ beneficiaries } onChange={ (e) => setBeneficiaries(e.target.value) }/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='container border p-4 mt-3 rounded'>
+                                    <h5><b>Project Duration</b></h5>
+                                    <div className="row pt-3">
+                                        <div className='col'>
+                                            <label className="pb-2">Original Start</label>
+                                            <input type="date" className="form-control" value={originalStart} onChange={handleOriginalStartChange} required/>
+                                        </div>
+                                        <div className='col'>
+                                            <label className="pb-2">Original End</label>
+                                            <input type="date" className="form-control" value={ originalEnd } onChange={handleOriginalEndChange} required/>
+                                        </div>
+                                    </div>
+                                    {/* <div className="row pt-3">
+                                        <div className='col'>
+                                            <button type="button" className="btn btn-dark px-3 py-2 border" onClick={generateBudgetFields} style={{ fontSize: '14px' }}>
+                                                Generate Yearly Fields
+                                            </button>
+                                        </div>
+                                    </div> */}
+                                </div>
+                                {/* <div className='container border p-4 mt-3 rounded'>
+                                    <h5><b>Budget</b></h5>
+                                    <div className="row pt-3">
+                                        {budget.map((item, index) => (
+                                            <div key={index} className="col">
+                                                <label className="pb-2">Year {item.year}</label>
+                                                <CurrencyInput
+                                                    id={`input-${index}`}
+                                                    name={`input-name-${index}`}
+                                                    placeholder="Enter amount"
+                                                    defaultValue={item.amount ? item.amount : ''}
+                                                    decimalsLimit={2}
+                                                    onValueChange={(value) => handleBudgetChange(index, parseFloat(value))}
+                                                    className='form-control'
+                                                />
+                                            </div>
+                                        ))}
+                                        <div className="col">
+                                            <label className="pb-2">Total Budget</label>
+                                            <input type="text" className="form-control" value={ totalBudget.toLocaleString() } onChange={ (e) => setTotalBudget(e.target.value) } readOnly/>
+                                        </div>
+                                    </div>
+                                </div> */}
+                                <div className='container border p-4 mt-3 rounded'>
+                                    <h5><b>Status</b></h5>
+                                    <div className="row pt-3">
+                                        <div className='col'>
+                                            <label className="pb-2">Status</label>
+                                            <textarea type="text" className="form-control" value={ status } onChange={ (e) => setStatus(e.target.value) } rows="1"/>
+                                        </div>
+                                        <div className='col'>
+                                            <label className="pb-2">Remarks</label>
+                                            <input
+                                                className="form-control w-100 dropdown-toggle"
+                                                id="dropRemarks"
+                                                data-bs-toggle="dropdown"
+                                                aria-haspopup="true"
+                                                aria-expanded="false"
+                                                value={remarks}
+                                                onChange={(e) => setRemarks(e.target.value)}
+                                                placeholder='Select Remarks'
+                                                readOnly
+                                            />
+                                            <ul className="dropdown-menu p-0" aria-labelledby="dropRemarks">
+                                                <li className="dropdown-item" onClick={handleRemarksChange}>New</li>
+                                                <li className="dropdown-item" onClick={handleRemarksChange}>Ongoing</li>
+                                                <li className="dropdown-item" onClick={handleRemarksChange}>Completed</li>
+                                                <li className="dropdown-item" onClick={handleRemarksChange}>Terminated</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer border-0">
+                                <button type="button" className="btn btn-outline px-3 py-2 border text-black" data-bs-dismiss="modal" onClick={clear} style={{ fontSize: '14px' }}>Cancel</button>
+                                <button className="btn btn-dark px-3 py-2 border" style={{ fontSize: '14px' }} disabled={!(
+                                    ISP || programTitle || projectTitle || responsiblePerson || funding ||
+                                    budget.length > 0 || implementingAgency || programLeader || emailAddress ||
+                                    contactNumber || postalAddress || cooperatingAgency || originalStart ||
+                                    originalEnd || objectives || description || deliverables || beneficiaries ||
+                                    status || remarks
+                                )}>Save Project</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>,
+                document.body
+            )}
+        </div>
+    )
+}
+
+export default AddProjectModal
