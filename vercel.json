@@ -1,0 +1,14 @@
+{
+  "buildCommand": "npm --prefix frontend run build",
+  "outputDirectory": "frontend/build",
+  "framework": "react",
+  "devCommand": "npm --prefix frontend start",
+  "env": [
+    "REACT_APP_MAPBOX_ACCESS_TOKEN"
+  ],
+  "functions": {
+    "backend/**": {
+      "runtime": "php@8.0"
+    }
+  }
+}
